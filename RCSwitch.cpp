@@ -79,7 +79,8 @@ static const RCSwitch::Protocol PROGMEM proto[] = {
   { 380, {  1,  6 }, {  1,  3 }, {  3,  1 }, false },    // protocol 4
   { 500, {  6, 14 }, {  1,  2 }, {  2,  1 }, false },    // protocol 5
   { 450, { 23,  1 }, {  1,  2 }, {  2,  1 }, true },      // protocol 6 (HT6P20B)
-  { 150, {  2, 62 }, {  1,  6 }, {  6,  1 }, false }     // protocol 7 (HS2303-PT, i. e. used in AUKEY Remote)
+  { 150, {  2, 62 }, {  1,  6 }, {  6,  1 }, false },     // protocol 7 (HS2303-PT, i. e. used in AUKEY Remote)
+  { 800, {  38, 1 }, {  2,  1 }, {  1,  2 }, true }     // protocol 8 
 };
 
 enum {
@@ -497,13 +498,13 @@ void RCSwitch::send(unsigned long code, unsigned int length) {
 #endif
 
   for (int nRepeat = 0; nRepeat < nRepeatTransmit; nRepeat++) {
+	  this->transmit(protocol.syncFactor);
     for (int i = length-1; i >= 0; i--) {
       if (code & (1L << i))
         this->transmit(protocol.one);
       else
         this->transmit(protocol.zero);
     }
-    this->transmit(protocol.syncFactor);
   }
 
   // Disable transmit after sending (i.e., for inverted protocols)
